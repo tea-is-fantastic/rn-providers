@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react';
 import Dialog from 'react-native-dialog';
 import { Platform } from 'react-native';
 
-import create from 'zustand';
+import { create } from 'zustand';
 
 export const useAlertStore = create<AlertState>((set) => ({
   visible: false,

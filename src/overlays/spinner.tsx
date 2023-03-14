@@ -1,6 +1,6 @@
 import React, { FC, PropsWithChildren } from 'react';
 import Spinner from 'react-native-loading-spinner-overlay';
-import create from 'zustand';
+import { create } from 'zustand';
 
 export interface ISpinnerConfig {
   setVisible: (val: boolean) => void;
