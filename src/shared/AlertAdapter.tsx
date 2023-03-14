@@ -32,7 +32,7 @@ const render =
           preserveAspectRatio="none"
           viewBox="0 0 512 512">
           <Path
-            fill="#FFFFFF"
+            fill={color}
             stroke={color}
             strokeWidth={2}
             d={icon}
