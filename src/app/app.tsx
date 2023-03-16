@@ -1,14 +1,14 @@
-import React, { FC, PropsWithChildren } from 'react';
+import React, { FC } from 'react';
 import useCachedResources from './useCachedResources';
-import type { Theme } from '@react-navigation/native';
+import type { PartialTheme } from '../theme/theme';
 import { MenuProvider, OverlayProvider } from '../overlays';
 import { ThemeProvider } from './provider';
 
 export type IAppWrapper = {
-  theme: Theme;
+  theme?: PartialTheme;
 };
 
-export const AppWrapper: FC<PropsWithChildren<IAppWrapper>> = ({
+export const AppWrapper: FC<IAppWrapper> = ({
   children,
   theme,
 }) => {

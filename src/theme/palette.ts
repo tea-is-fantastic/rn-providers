@@ -1,0 +1,26 @@
+export type Palette = {
+  splashColor: string;
+  iconColor: string;
+  primaryColor: string;
+  primaryDarkColor: string;
+  primaryLightColor: string;
+  secondaryColor: string;
+  secondaryDarkColor: string;
+  secondaryLightColor: string;
+  tertiaryColor: string;
+  tertiaryDarkColor: string;
+  tertiaryLightColor: string;
+  quaternaryColor: string;
+  quaternaryDarkColor: string;
+  quaternaryLightColor: string;
+  disabledColor: string;
+  disabledDarkColor: string;
+  disabledLightColor: string;
+  backgroundColor: string;
+  cardColor: string;
+  textColor: string;
+  successColor: string;
+  errorColor: string;
+  infoColor: string;
+  warningColor: string;
+};

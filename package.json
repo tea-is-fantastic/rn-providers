@@ -1,6 +1,6 @@
 {
   "name": "@tisf/rn-providers",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -85,7 +85,7 @@
     "react-native-builder-bob": "^0.20.0",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-onesignal": "^4.5.0",
-    "react-native-paper": "^5.0.0-rc.10",
+    "react-native-paper": "^5.4.1",
     "react-native-paper-old": "npm:react-native-paper@4.12.5",
     "react-native-safe-area-context": "^4.4.1",
     "react-native-vector-icons": "^9.2.0",
@@ -111,6 +111,7 @@
     "zustand": "*"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "react-native-dialog": "^9.3.0",
     "react-native-flash-message": "^0.3.1",
     "react-native-loading-spinner-overlay": "^3.0.1",
