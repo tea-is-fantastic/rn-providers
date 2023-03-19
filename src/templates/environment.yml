@@ -1,0 +1,55 @@
+auth:
+  mode: passwordless
+  onboard: true
+  social: false
+  international: false
+
+root:
+  image:
+    - https://raw.githubusercontent.com/tea-is-fantastic/assets_test/main/cov.jpg
+    - https://raw.githubusercontent.com/tea-is-fantastic/assets_test/main/cov1.jpg
+    - https://raw.githubusercontent.com/tea-is-fantastic/assets_test/main/cov2.jpg
+    - https://raw.githubusercontent.com/tea-is-fantastic/assets_test/main/cov3.jpg
+    - https://raw.githubusercontent.com/tea-is-fantastic/assets_test/main/cov4.jpg
+  logo: https://raw.githubusercontent.com/tea-is-fantastic/assets_test/main/logofull.png
+  line1: Karachi sab ka hai
+  line2: Karachi ka koi nai!
+
+onboard:
+  logo: https://raw.githubusercontent.com/tea-is-fantastic/assets_test/main/logofull.png
+
+secrets:
+  onesignal: a
+  facebookAppId: a
+  googleMapsApiKey: a
+  recaptcha: a
+  googleAnalyticsCode: a
+  googleAppId: a
+  googleWebAppId: a
+  linkedInAppId: a
+  linkedInRedirectUri: a
+
+urls:
+  api: a
+  web: a
+  mobile: a
+  protocol: a
+  CDN: a
+  imageCDN: a
+  videoCDN: a
+
+endpoints: {
+  appInfo: /app/info|get
+  phoneExists: /phones/exists|get,
+  firebaseConfirm: /phones/firebase/confirm|post
+
+  reset: /auth/reset|post
+  register: /auth/register|post
+  login: /auth/login|post
+  socialLogin: /auth/social|post
+  linkedInAuth: /auth/linkedin/access|post
+  logout: /auth/logout|post
+
+  getCurrentUser: /users/current|get,
+
+  getSingleAddress: /addresses/single|get
