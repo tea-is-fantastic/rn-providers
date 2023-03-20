@@ -1,9 +1,8 @@
 import moment, { type Moment } from 'moment';
 import { AuthModel } from './AuthModel';
 import type { AuthInterface } from './AuthInterface';
-import LocalStorage from '../../adapters/LocalStorage';
 import OneSignal from 'react-native-onesignal';
-import { FbAnalytics } from '../../adapters';
+import { FbAnalytics, LocalStorage } from '../../adapters';
 
 export class AuthUtils {
   static calculateExpiry = (auth: AuthModel): Moment | undefined => {

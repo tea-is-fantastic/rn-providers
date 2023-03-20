@@ -3,7 +3,7 @@ import {forOwn} from 'lodash';
 
 export const storage = new MMKV();
 
-export default class LocalStorage {
+export class LocalStorage {
   static get = (key: string, defaultValue?: string): string | undefined => {
     const x = storage.getString(key);
     return x || defaultValue;

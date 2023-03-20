@@ -2,8 +2,7 @@ import { create } from 'zustand';
 import {useAuthStore} from '../auth';
 import type { AddressInterface } from './AddressInterface';
 import type { ThenFunction } from '../../types';
-import type { APIError } from 'src/shared/services/api/types';
-import { apiStandalone } from '../../services/api/funcs';
+import { apiStandalone, APIError } from '../../services';
 
 interface AddressState extends AddressInterface {
   update: (input?: AddressInterface) => void;

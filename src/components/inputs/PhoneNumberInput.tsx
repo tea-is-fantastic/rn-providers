@@ -3,14 +3,18 @@ import CountryPicker, { CountryCode } from 'react-native-country-picker-modal';
 import { Input } from 'react-native-elements';
 import { View } from 'react-native';
 import { useFormikContext } from 'formik';
-import { useThemeStore } from '../../shared/theme';
+import { useThemeStore } from '../../shared';
 
 export interface PhoneModel {
   phoneNumber: string;
   country: CountryCode;
 }
 
-export const PhoneNumberInput: React.FC = () => {
+export interface IPhoneNumberInput {
+  countries?: CountryCode[];
+}
+
+export const PhoneNumberInput: React.FC<IPhoneNumberInput> = ({countries}) => {
   const {values, errors, setFieldValue, submitForm} = useFormikContext<PhoneModel>();
   const value = values.phoneNumber;
   const code = values.country;
@@ -50,6 +54,7 @@ export const PhoneNumberInput: React.FC = () => {
         leftIcon={
           <CountryPicker
             countryCode={code}
+            countryCodes={countries}
             onSelect={v => setFieldValue('country', v.cca2)}
             withFilter
           />

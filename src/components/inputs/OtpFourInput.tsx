@@ -34,7 +34,7 @@ const animateCell = ({ index, isFocused }: { hasValue: boolean; index: number; i
   ]).start();
 };
 
-const OtpFourInput = () => {
+export const OtpFourInput = () => {
   const [value, setValue] = useState('');
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -103,8 +103,6 @@ const OtpFourInput = () => {
     </View>
   );
 };
-
-export default OtpFourInput;
 
 const styles = StyleSheet.create({
   codeFieldRoot: {
