@@ -18,7 +18,7 @@ export const ThemeProvider: ReactFC<IThemeProvider> = ({ children, theme }) => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <NavigationContainer theme={nav} onReady={() => RNBootSplash && RNBootSplash.hide()}>
+        <NavigationContainer theme={nav} onReady={() => RNBootSplash.hide()}>
           <Provider theme={paper}>
             {children}
           </Provider>
