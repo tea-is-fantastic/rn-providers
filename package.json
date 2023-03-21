@@ -1,6 +1,6 @@
 {
   "name": "@tisf/rn-providers",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -147,7 +147,7 @@
     "react-native-geolocation-service": "^5.3.1",
     "react-native-linkedin": "^2.1.1",
     "react-native-loading-spinner-overlay": "^3.0.1",
-    "react-native-otp-verify-remastered": "^1.1.0",
+    "react-native-otp-verify": "^1.1.4",
     "react-native-permissions": "^3.8.0",
     "react-native-popup-menu": "^0.16.1",
     "react-native-reanimated-carousel": "^3.3.0",

@@ -1,31 +1,17 @@
 import React from 'react';
-import {
-  Dimensions,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
-import {
-  CodeField,
-  Cursor,
-  useBlurOnFulfill,
-  useClearByFocusCell,
-} from 'react-native-confirmation-code-field';
-import {useFormikContext} from 'formik';
-import {
-  FirebaseModel,
-  useFirebaseStore,
-} from '../../shared';
-import shallow from 'zustand/shallow';
-import RNOtpVerify from 'react-native-otp-verify-remastered';
+import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
+import { useFormikContext } from 'formik';
+import { FirebaseModel, useFirebaseStore } from '../../shared';
+import { shallow } from 'zustand/shallow';
+import { removeListener, startOtpListener } from 'react-native-otp-verify';
 
 const CELL_COUNT = 6;
 const size = (Dimensions.get('window').width - 80) / CELL_COUNT;
 
 export const OtpSixInput = () => {
-  const {values, setFieldValue, submitForm} = useFormikContext<FirebaseModel>();
+  const { values, setFieldValue, submitForm } = useFormikContext<FirebaseModel>();
   const [confirm, verif] = useFirebaseStore(
     state => [state.confirm, state.verification],
     shallow,
@@ -49,7 +35,7 @@ export const OtpSixInput = () => {
     }
   }, [submitForm, value]);
 
-  const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
 
   React.useEffect(() => {
     if (confirm || verif) {
@@ -60,25 +46,14 @@ export const OtpSixInput = () => {
   }, [confirm, verif]);
 
   React.useEffect(() => {
-    const otpHandler = async (message: string) => {
+    startOtpListener(message => {
       if (message) {
-        console.log(message);
         const otpArr = /(\d{6})/g.exec(message);
         const otp = otpArr ? otpArr[1] : null;
-        console.log(otp);
         setFieldValue('code', otp);
       }
-    };
-    if (Platform.OS === 'android') {
-      RNOtpVerify.getOtp()
-        .then(() => RNOtpVerify.addListener(otpHandler))
-        .catch(p => console.log(p));
-    }
-    return () => {
-      if (Platform.OS === 'android') {
-        RNOtpVerify.removeListener();
-      }
-    };
+    });
+    return () => removeListener();
   }, [setFieldValue]);
 
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -96,10 +71,10 @@ export const OtpSixInput = () => {
         cellCount={CELL_COUNT}
         onBlur={submit}
         rootStyle={styles.codeFieldRoot}
-        keyboardType="number-pad"
-        autoComplete="sms-otp"
-        textContentType="oneTimeCode"
-        renderCell={({index, symbol, isFocused}) => (
+        keyboardType='number-pad'
+        autoComplete='sms-otp'
+        textContentType='oneTimeCode'
+        renderCell={({ index, symbol, isFocused }) => (
           <View
             // Make sure that you pass onLayout={getCellOnLayoutHandler(index)} prop to root component of "Cell"
             onLayout={getCellOnLayoutHandler(index)}
@@ -116,8 +91,8 @@ export const OtpSixInput = () => {
 };
 
 const styles = StyleSheet.create({
-  root: {padding: 20},
-  title: {textAlign: 'center', fontSize: 30},
+  root: { padding: 20 },
+  title: { textAlign: 'center', fontSize: 30 },
   codeFieldRoot: {
     // width: 280,
     marginLeft: 'auto',
