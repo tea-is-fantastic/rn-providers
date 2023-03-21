@@ -1,7 +1,7 @@
 import type React from 'react';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import type {FormikContextType} from 'formik';
-import create from 'zustand';
+import { create } from 'zustand';
 import { SnackbarFactory } from '../factories/SnackbarFactory';
 import { formatPhone } from '../func';
 import analytics from '@react-native-firebase/analytics';
