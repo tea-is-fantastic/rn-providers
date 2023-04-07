@@ -113,10 +113,10 @@
   },
   "peerDependencies": {
     "@gorhom/bottom-sheet": "^4",
-    "@react-native-firebase/app": "^17",
-    "@react-native-firebase/auth": "^17",
     "@react-native-firebase/analytics": "^17",
+    "@react-native-firebase/app": "^17",
     "@react-native-firebase/app-check": "^17",
+    "@react-native-firebase/auth": "^17",
     "@react-native-firebase/perf": "^17",
     "@react-navigation/native": "^6",
     "axios": "*",
@@ -149,6 +149,7 @@
     "react-native-loading-spinner-overlay": "^3.0.1",
     "react-native-permissions": "^3.8.0",
     "react-native-popup-menu": "^0.16.1",
+    "react-native-responsive-fontsize": "^0.5.1",
     "react-native-simple-toast": "^2.0.0"
   },
   "engines": {
