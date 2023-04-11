@@ -1,11 +1,12 @@
 import React from 'react';
 import useCachedResources from './useCachedResources';
 import type { PartialTheme } from '../../shared/theme/theme';
-import { MenuProvider, OverlayProvider } from '../overlays';
+import { OverlayProvider } from '../overlays';
 import { ThemeProvider } from './provider';
-import type { ReactFC } from '../../shared';
-import type { PartialAppState } from '../../shared/models';
-import { generateAppInfo } from '../../shared/models';
+import type { PartialAppState, ReactFC } from '../../shared';
+import { generateAppInfo } from '../../shared';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '../rest/shared/util';
 
 export type IAppWrapper = {
   theme?: PartialTheme;
@@ -15,7 +16,7 @@ export type IAppWrapper = {
 export const AppWrapper: ReactFC<IAppWrapper> = ({
   children,
   theme,
-  appInfo
+  appInfo,
 }) => {
   const isLoadingComplete = useCachedResources();
 
@@ -23,15 +24,16 @@ export const AppWrapper: ReactFC<IAppWrapper> = ({
     generateAppInfo(appInfo);
   }, [appInfo]);
 
-
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
       <ThemeProvider theme={theme}>
-        <MenuProvider>
-          <OverlayProvider>{children}</OverlayProvider>
-        </MenuProvider>
+        <OverlayProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </OverlayProvider>
       </ThemeProvider>
     );
   }

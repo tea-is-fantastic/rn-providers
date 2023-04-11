@@ -1,5 +1,5 @@
-import {MMKV} from 'react-native-mmkv';
-import {forOwn} from 'lodash';
+import { MMKV } from 'react-native-mmkv';
+import { forOwn } from 'lodash';
 
 export const storage = new MMKV();
 
@@ -14,7 +14,7 @@ export class LocalStorage {
     return x === undefined ? defaultValue : x;
   };
 
-  static getInt = async (key: string, defaultValue = -1): Promise<number> => {
+  static getInt = (key: string, defaultValue = -1): number => {
     const x = storage.getNumber(key);
     return x === undefined ? defaultValue : x;
   };
@@ -31,13 +31,13 @@ export class LocalStorage {
     return storage.clearAll();
   };
 
-  static multiremove = async (keys: string[]) => {
+  static multiremove = (keys: string[]) => {
     for (const i of keys) {
       storage.delete(i);
     }
   };
 
-  static multiadd = async (obj: Record<string, any>) => {
+  static multiadd = (obj: Record<string, any>) => {
     forOwn(obj, function (value: any, key: string) {
       storage.set(key, value);
     });

@@ -37,24 +37,24 @@ export class AuthUtils {
     return a;
   }
 
-  static async save(auth: AuthModel): Promise<AuthModel> {
+  static save(auth: AuthModel): AuthModel {
     AuthUtils.calculateExpiry(auth);
     const userStr = auth.userId?.toString();
-    await LocalStorage.set('token', auth.token || '');
-    await LocalStorage.set('hash', auth.hash || '');
-    await LocalStorage.set('ttl', auth.ttl?.toString() || '');
-    await LocalStorage.set('userId', userStr || '');
-    await LocalStorage.set('expiry', auth.expiry?.toISOString() || '');
-    await LocalStorage.set('created', auth.created?.toISOString() || '');
+    LocalStorage.set('token', auth.token || '');
+    LocalStorage.set('hash', auth.hash || '');
+    LocalStorage.set('ttl', auth.ttl?.toString() || '');
+    LocalStorage.set('userId', userStr || '');
+    LocalStorage.set('expiry', auth.expiry?.toISOString() || '');
+    LocalStorage.set('created', auth.created?.toISOString() || '');
     if (userStr) {
       OneSignal.setExternalUserId(userStr, auth.hash);
-      await FbAnalytics.setUserId(userStr);
+      FbAnalytics.setUserId(userStr);
     }
     return auth;
   }
 
-  static async remove() {
-    await LocalStorage.multiremove([
+  static remove() {
+    LocalStorage.multiremove([
       'token',
       'ttl',
       'userId',
@@ -63,25 +63,25 @@ export class AuthUtils {
       'hash',
     ]);
     OneSignal.removeExternalUserId();
-    await FbAnalytics.setUserId(null);
+    FbAnalytics.setUserId(null);
   }
 
-  static async getToken() {
-    return (await LocalStorage.get('token')) || undefined;
+  static getToken() {
+    return LocalStorage.get('token') || undefined;
   }
 
-  static async init(input?: AuthInterface): Promise<AuthModel | undefined> {
+  static init(input?: AuthInterface): AuthModel | undefined {
     if (input) {
       const output = new AuthModel(input);
       return AuthUtils.save(output);
     }
-    const token = await AuthUtils.getToken();
+    const token = AuthUtils.getToken();
     if (token) {
-      const created = String(await LocalStorage.get('created'));
-      const ttlStr = await LocalStorage.get('ttl');
+      const created = String(LocalStorage.get('created'));
+      const ttlStr = LocalStorage.get('ttl');
       const ttl = Number(ttlStr);
-      const userId = await LocalStorage.get('userId');
-      const hash = await LocalStorage.get('hash');
+      const userId = LocalStorage.get('userId');
+      const hash = LocalStorage.get('hash');
       const auth = new AuthModel({
         token,
         ttl,
@@ -99,7 +99,9 @@ export class AuthUtils {
     return !!(auth && auth.token) || !!(auth && auth.id);
   };
 
-  static simplify = (auth: AuthModel | undefined): AuthInterface | undefined => {
+  static simplify = (
+    auth: AuthModel | undefined
+  ): AuthInterface | undefined => {
     return auth ? JSON.parse(JSON.stringify(auth)) : undefined;
   };
 }

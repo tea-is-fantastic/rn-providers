@@ -1,11 +1,11 @@
-import type {APIError, APIResponse, APISuccess, IRestConfig} from './types';
-import {RestConfig} from './config';
-import {AuthUtils} from '../../models';
-import {hideSpinner, showSpinner} from '../../../components';
+import type { APIError, APIResponse, APISuccess, IRestConfig } from './types';
+import { RestConfig } from './config';
+import { AuthUtils } from '../../models';
+import { hideSpinner, showSpinner } from '../../../components';
 import { SnackbarFactory } from '../../../shared';
 
 export const manageToken = async (
-  config: IRestConfig,
+  config: IRestConfig
 ): Promise<string | undefined> => {
   if (config.unauth) {
     return;
@@ -18,7 +18,7 @@ export const manageToken = async (
 
 export const manageConfig = async <T,>(
   config: IRestConfig,
-  notoken?: boolean,
+  notoken?: boolean
 ): Promise<RestConfig<T>> => {
   const output = new RestConfig<T>(config);
   if (notoken) {
@@ -30,7 +30,7 @@ export const manageConfig = async <T,>(
 
 export const manageLoading = async (
   config: IRestConfig,
-  loading: boolean,
+  loading: boolean
 ): Promise<void> => {
   if (loading) {
     if (config.loadingStart) {
@@ -47,7 +47,7 @@ export const manageLoading = async (
 
 export const manageError = async (
   iConfig: IRestConfig,
-  error: APIError,
+  error: APIError
 ): Promise<APIResponse<APIError>> => {
   const config = await manageConfig(iConfig, true);
   if (config.displayError) {
@@ -66,7 +66,7 @@ export const manageError = async (
 
 export const manageSuccess = async <T,>(
   iConfig: IRestConfig,
-  success: T,
+  success: T
 ): Promise<APIResponse<T>> => {
   const config = await manageConfig<T>(iConfig, true);
   if (config.displaySuccess) {
