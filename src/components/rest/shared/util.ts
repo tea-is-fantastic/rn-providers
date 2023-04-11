@@ -1,5 +1,10 @@
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-import { QueryClient } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+} from '@tanstack/react-query';
 import { Platform } from 'react-native';
 import type { IRestConfig, PickedFile } from './types';
 import { AuthUtils, useAppStore } from '@tisf/rn-providers';
@@ -79,7 +84,7 @@ export const queryClient = new QueryClient({
   },
 });
 
-export const createQueryFn = (queryKey: string, config: IRestConfig = {}) => {
+export const axiosFn = (queryKey: string, config: IRestConfig = {}) => {
   const token = AuthUtils.getToken();
   const { method, url } = urlFromString(queryKey);
   const { loading, displaySpinner } = config;
@@ -118,11 +123,41 @@ export const createQueryFn = (queryKey: string, config: IRestConfig = {}) => {
       return Promise.reject(error);
     }
   );
-  return () =>
-    instance({
+  return instance({
+    ...config,
+    method,
+    url,
+    headers,
+  });
+};
+
+export const createQueryFn = (queryKey: string, config: IRestConfig = {}) => {
+  return () => axiosFn(queryKey, config);
+};
+
+export interface IPageParam {
+  count: number;
+  length: number;
+  before?: number;
+  after?: number;
+}
+
+export const createListQueryFn = (
+  queryKey: string,
+  config: IRestConfig = {}
+): QueryFunction => {
+  return ({ pageParam }: QueryFunctionContext<QueryKey, IPageParam>) => {
+    const { length = 0, before, after } = pageParam || {};
+    const params = { ...(config.params || {}), current: length };
+    if (before) {
+      params.before = before;
+    }
+    if (after) {
+      params.after = after;
+    }
+    return axiosFn(queryKey, {
       ...config,
-      method,
-      url,
-      headers,
+      params,
     });
+  };
 };

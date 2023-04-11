@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import {AuthUtils} from './AuthUtils';
-import type {AxiosError, AxiosResponse} from 'axios';
-import {useUserStore} from '../user';
+import { AuthUtils } from './AuthUtils';
+import type { AxiosError, AxiosResponse } from 'axios';
+import { useUserStore } from '../user';
 import type { AuthInterface } from './AuthInterface';
 import { hideSpinner, showSpinner } from '../../../components';
 import { apiPromise } from '../../services/api/funcs';
@@ -17,17 +17,17 @@ interface AuthState extends AuthInterface {
 export const useAuthStore = create<AuthState>((set, get) => ({
   update: (input: AuthInterface = {}) =>
     set(
-      state => ({
+      (state) => ({
         ...input,
         update: state.update,
         isAuth: state.isAuth,
         logout: state.logout,
       }),
-      true,
+      true
     ),
   isAuth: () => !!get().token,
   logout: async (then?: ThenFunction<AxiosResponse, AxiosError>) => {
-    const {token, update} = get();
+    const { token, update } = get();
     await AuthUtils.remove();
     update({
       loggedOut: true,
@@ -42,14 +42,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       displayError: false,
       displaySuccess: false,
     })
-      .then(response => {
+      .then((response) => {
         hideSpinner();
         then && then(response);
       })
-      .catch(err => {
+      .catch((err) => {
         hideSpinner();
         then && then(null, err);
       })
       .finally(() => hideSpinner());
   },
+  token: AuthUtils.getToken(),
 }));
