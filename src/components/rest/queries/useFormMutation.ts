@@ -1,7 +1,7 @@
 import type { FormikHelpers } from 'formik';
 import { onErrorFn, onLoadFn, onSuccessFn } from '../shared/managers';
 import { createQueryFn } from '../shared/util';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import type { IRestConfig } from '../shared/types';
 
 export interface IFormikConfig
@@ -14,7 +14,7 @@ export const useFormMutation = (
   key: string,
   data: any,
   config: IFormikConfig
-) => {
+): UseMutationResult => {
   const { onSuccess, onError, helpers, reset } = config;
   const { setSubmitting, resetForm } = helpers;
   const queryFn = createQueryFn(key, {

@@ -1,13 +1,20 @@
 import type { IRestConfig } from '../shared/types';
 import { onLoadFn } from '../shared/managers';
 import { createListQueryFn, IPageParam } from '../shared/util';
-import { useInfiniteQuery, UseQueryOptions } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryResult,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 
 interface IListConfig
   extends Pick<IRestConfig, 'loading'>,
     Pick<UseQueryOptions, 'enabled'> {}
 
-export const useListQuery = (key: string, config: IListConfig) => {
+export const useListQuery = (
+  key: string,
+  config: IListConfig
+): UseInfiniteQueryResult => {
   const { loading, enabled } = config;
   const queryFn = createListQueryFn(key, config);
   return useInfiniteQuery([key], queryFn, {

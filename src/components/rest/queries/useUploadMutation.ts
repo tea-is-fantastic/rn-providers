@@ -1,6 +1,6 @@
 import { onErrorFn, onLoadFn, onSuccessFn } from '../shared/managers';
 import { createQueryFn, handleUpload } from '../shared/util';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import type { IRestConfig, PickedFile } from '../shared/types';
 
 export const useUploadMutation = (
@@ -8,7 +8,7 @@ export const useUploadMutation = (
   files: PickedFile[],
   data: any,
   config?: IRestConfig
-) => {
+): UseMutationResult => {
   const { onSuccess, onError, loading } = config || {};
   const formData = handleUpload(files, data);
   const queryFn = createQueryFn(key, {

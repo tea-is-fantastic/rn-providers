@@ -1,9 +1,17 @@
 import type { IRestConfig } from '../shared/types';
 import { onErrorFn, onLoadFn, onSuccessFn } from '../shared/managers';
 import { createQueryFn } from '../shared/util';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+  UseQueryResult,
+} from '@tanstack/react-query';
 
-export const useComplexQuery = (key: string, config: IRestConfig) => {
+export const useComplexQuery = (
+  key: string,
+  config: IRestConfig
+): UseQueryResult => {
   const {
     onSuccess,
     onError,
@@ -21,7 +29,10 @@ export const useComplexQuery = (key: string, config: IRestConfig) => {
   });
 };
 
-export const useComplexMutation = (key: string, config: IRestConfig) => {
+export const useComplexMutation = (
+  key: string,
+  config: IRestConfig
+): UseMutationResult => {
   const {
     onSuccess,
     onError,
