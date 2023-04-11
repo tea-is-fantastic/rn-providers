@@ -10,7 +10,7 @@ export interface IFormikConfig
   reset?: boolean;
 }
 
-export const useFormMutation = async (
+export const useFormMutation = (
   key: string,
   data: any,
   config: IFormikConfig

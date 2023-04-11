@@ -3,7 +3,7 @@ import { onErrorFn, onLoadFn, onSuccessFn } from '../shared/managers';
 import { createQueryFn } from '../shared/util';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-export const useComplexQuery = async (key: string, config: IRestConfig) => {
+export const useComplexQuery = (key: string, config: IRestConfig) => {
   const {
     onSuccess,
     onError,
@@ -21,7 +21,7 @@ export const useComplexQuery = async (key: string, config: IRestConfig) => {
   });
 };
 
-export const useComplexMutation = async (key: string, config: IRestConfig) => {
+export const useComplexMutation = (key: string, config: IRestConfig) => {
   const {
     onSuccess,
     onError,

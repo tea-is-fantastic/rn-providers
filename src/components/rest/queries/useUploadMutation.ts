@@ -3,7 +3,7 @@ import { createQueryFn, handleUpload } from '../shared/util';
 import { useMutation } from '@tanstack/react-query';
 import type { IRestConfig, PickedFile } from '../shared/types';
 
-export const useUploadMutation = async (
+export const useUploadMutation = (
   key: string,
   files: PickedFile[],
   data: any,

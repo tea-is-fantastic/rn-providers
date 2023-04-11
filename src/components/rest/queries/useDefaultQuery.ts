@@ -4,7 +4,7 @@ import { createQueryFn } from '../shared/util';
 import type { IUseQuery } from '../shared/types';
 import type { IUseMutation } from '../shared/types';
 
-export const useDefaultQuery = async (
+export const useDefaultQuery = (
   queryKey: string,
   config?: AxiosRequestConfig,
   query?: IUseQuery
@@ -14,7 +14,7 @@ export const useDefaultQuery = async (
   return useQuery([queryKey], queryFn, query);
 };
 
-export const useDefaultMutation = async (
+export const useDefaultMutation = (
   queryKey: string,
   config?: AxiosRequestConfig,
   query?: IUseMutation

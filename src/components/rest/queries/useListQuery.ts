@@ -7,7 +7,7 @@ interface IListConfig
   extends Pick<IRestConfig, 'loading'>,
     Pick<UseQueryOptions, 'enabled'> {}
 
-export const useListQuery = async (key: string, config: IListConfig) => {
+export const useListQuery = (key: string, config: IListConfig) => {
   const { loading, enabled } = config;
   const queryFn = createListQueryFn(key, config);
   return useInfiniteQuery([key], queryFn, {

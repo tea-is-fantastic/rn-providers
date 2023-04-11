@@ -3,7 +3,7 @@ import { onLoadFn } from '../shared/managers';
 import { createQueryFn } from '../shared/util';
 import { useQuery } from '@tanstack/react-query';
 
-export const useMountQuery = async (
+export const useMountQuery = (
   key: string,
   loading?: IRestConfig['loading']
 ) => {
