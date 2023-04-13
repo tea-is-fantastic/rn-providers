@@ -2,7 +2,7 @@ import type { FormikHelpers } from 'formik';
 import { onErrorFn, onLoadFn, onSuccessFn } from '../shared/managers';
 import { createQueryFn } from '../shared/util';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
-import type { IRestConfig } from '../shared/types';
+import type { IRestConfig, IUseMutation } from '../shared/types';
 
 export interface IFormikConfig
   extends Pick<IRestConfig, 'data' | 'onSuccess' | 'onError'> {
@@ -13,7 +13,8 @@ export interface IFormikConfig
 export const useFormMutation = (
   key: string,
   data: any,
-  config: IFormikConfig
+  config: IFormikConfig,
+  options: IUseMutation = {}
 ): UseMutationResult => {
   const { onSuccess, onError, helpers, reset } = config;
   const { setSubmitting, resetForm } = helpers;
@@ -25,5 +26,6 @@ export const useFormMutation = (
     onError: onErrorFn(onError, true),
     onSuccess: onSuccessFn(reset ? resetForm : onSuccess, true),
     onSettled: () => onLoadFn(false, setSubmitting),
+    ...options,
   });
 };

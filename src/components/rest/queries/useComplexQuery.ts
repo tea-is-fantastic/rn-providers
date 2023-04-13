@@ -1,4 +1,4 @@
-import type { IRestConfig } from '../shared/types';
+import type { IRestConfig, IUseMutation, IUseQuery } from '../shared/types';
 import { onErrorFn, onLoadFn, onSuccessFn } from '../shared/managers';
 import { createQueryFn } from '../shared/util';
 import {
@@ -10,7 +10,8 @@ import {
 
 export const useComplexQuery = (
   key: string,
-  config: IRestConfig
+  config: IRestConfig,
+  options: IUseQuery = {}
 ): UseQueryResult => {
   const {
     onSuccess,
@@ -26,12 +27,14 @@ export const useComplexQuery = (
     onError: onErrorFn(onError, displayError),
     onSettled: () => onLoadFn(false, loading, displaySpinner),
     enabled: false,
+    ...options,
   });
 };
 
 export const useComplexMutation = (
   key: string,
-  config: IRestConfig
+  config: IRestConfig,
+  options: IUseMutation = {}
 ): UseMutationResult => {
   const {
     onSuccess,
@@ -46,5 +49,6 @@ export const useComplexMutation = (
     onSuccess: onSuccessFn(onSuccess, displaySuccess),
     onError: onErrorFn(onError, displayError),
     onSettled: () => onLoadFn(false, loading, displaySpinner),
+    ...options,
   });
 };

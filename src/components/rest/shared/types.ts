@@ -1,5 +1,6 @@
 import type { AxiosRequestConfig } from 'axios';
 import type {
+  UseInfiniteQueryOptions,
   UseMutationOptions,
   UseQueryOptions,
 } from '@tanstack/react-query';
@@ -54,6 +55,11 @@ export type Endpoint = {
 
 export type IUseQuery = Omit<
   UseQueryOptions<unknown, unknown, unknown, string[]>,
+  'queryKey' | 'queryFn'
+>;
+
+export type IUseListQuery = Omit<
+  UseInfiniteQueryOptions<unknown, unknown, unknown, unknown, string[]>,
   'queryKey' | 'queryFn'
 >;
 

@@ -14,14 +14,17 @@ import { onLoadFn } from './managers';
 export interface UrlConfig {
   url: string;
   method: AxiosRequestConfig['method'];
+  urlConfig: AxiosRequestConfig;
 }
 
 export const urlFromString = (url: string | AxiosRequestConfig): UrlConfig => {
   const input = typeof url === 'string' ? url : (url.url as string);
   const output = input.split('|');
+  const baseURL = input.indexOf('http') >= 0 ? '' : undefined;
   return {
     url: output[0] as string,
     method: output[1] || 'get',
+    urlConfig: typeof baseURL === 'string' ? { baseURL } : {},
   };
 };
 
@@ -86,7 +89,7 @@ export const queryClient = new QueryClient({
 
 export const axiosFn = (queryKey: string, config: IRestConfig = {}) => {
   const token = AuthUtils.getToken();
-  const { method, url } = urlFromString(queryKey);
+  const { method, url, urlConfig } = urlFromString(queryKey);
   const { loading, displaySpinner } = config;
   const headers: AxiosRequestConfig['headers'] = { ...config.headers };
   if (token) {
@@ -95,6 +98,7 @@ export const axiosFn = (queryKey: string, config: IRestConfig = {}) => {
   const instance = axios.create({
     ...defaultConfig,
     baseURL: useAppStore.getState().urls?.api,
+    ...urlConfig,
   });
 
   instance.interceptors.request.use((request: InternalAxiosRequestConfig) => {
