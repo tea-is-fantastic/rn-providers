@@ -37,7 +37,7 @@ export const sculptUrl = (
 
 export const defaultConfig: AxiosRequestConfig = {
   xsrfHeaderName: 'X-CSRFToken',
-  timeout: 5000,
+  timeout: 50000,
   validateStatus(status: number): boolean {
     return status >= 200 && status < 500; // default
   },
