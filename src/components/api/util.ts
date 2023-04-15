@@ -16,11 +16,13 @@ export const urlFromString = (url: string | AxiosRequestConfig): UrlConfig => {
   const input = typeof url === 'string' ? url : (url.url as string);
   const output = input.split('|');
   const baseURL = input.indexOf('http') >= 0 ? '' : undefined;
-  return {
+  const oput = {
     url: output[0] as string,
     method: output[1] || 'get',
     urlConfig: typeof baseURL === 'string' ? { baseURL } : {},
   };
+  console.log(oput);
+  return oput;
 };
 
 export const defaultConfig: AxiosRequestConfig = {

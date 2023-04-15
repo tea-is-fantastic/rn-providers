@@ -1,31 +1,31 @@
-import type { APIError, APIResponse, APISuccess, IRestConfig } from './types';
+import type { APIError, APISuccess, IRestConfig } from './types';
 import { SnackbarFactory } from '../../shared';
 import { hideSpinner, showSpinner } from '../overlays';
 
 export const onErrorFn = async (
   response: APIError,
   { onError, displayError }: IRestConfig
-): Promise<APIResponse<APIError>> => {
+): Promise<APIError> => {
   if (displayError) {
     SnackbarFactory.e(response?.message);
   }
   if (onError) {
     await onError(response);
   }
-  return { error: true, success: false, response };
+  return response;
 };
 
 export const onSuccessFn = async <T = unknown,>(
   response: APISuccess,
   { onSuccess, displaySuccess }: IRestConfig
-): Promise<APIResponse<T>> => {
+): Promise<T> => {
   if (displaySuccess) {
     SnackbarFactory.s(response.message);
   }
   if (onSuccess) {
     await onSuccess(response);
   }
-  return { error: false, success: true, response: response as T };
+  return response as T;
 };
 
 export const onLoadFn = (

@@ -38,16 +38,12 @@ export const useZustandQuery = (key: string, store: StoreApi<IQueryStore>) => {
       setError();
       try {
         const resp = await instance({ ...conf });
-        const { response, error } = await handleResponse(resp, {
+        const response = await handleResponse(resp, {
           ...config,
           ...conf,
         });
+        setData(response);
         setLoading(false);
-        if (error) {
-          setError(response as APIError);
-        } else {
-          setData(response);
-        }
       } catch (e) {
         AlertFactory.l(e);
         setError(defaultError);

@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from 'axios';
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import type { APIError, APIResponse, IRestConfig, PickedFile } from '../types';
-import { onErrorFn, onSuccessFn } from '../managers';
+import type { IRestConfig, PickedFile } from '../types';
+import { onSuccessFn } from '../managers';
 import { AuthUtils, useAppStore } from '../../../shared';
 import {
   defaultConfig,
@@ -17,7 +17,6 @@ export const axiosInstance = (key: string, config: IRestConfig = {}) => {
 
   const headers: AxiosRequestConfig['headers'] = {
     ...defaultHeaders,
-    ...config.headers,
   };
   if (token) {
     headers.Authorization = `Bearer ${token}`;
@@ -25,10 +24,6 @@ export const axiosInstance = (key: string, config: IRestConfig = {}) => {
   const instance = axios.create({
     ...defaultConfig,
     baseURL: useAppStore.getState()?.urls?.api,
-    ...urlConfig,
-    ...config,
-    url,
-    method,
   });
 
   instance.interceptors.request.use((request: InternalAxiosRequestConfig) => {
@@ -56,7 +51,15 @@ export const axiosInstance = (key: string, config: IRestConfig = {}) => {
       return Promise.reject(error);
     }
   );
-  return instance;
+  return (aconfig: AxiosRequestConfig = {}) =>
+    instance({
+      ...config,
+      method,
+      url,
+      headers,
+      ...urlConfig,
+      ...aconfig,
+    });
 };
 
 export const axiosFn = (key: string, config: IRestConfig = {}) => {
@@ -137,15 +140,12 @@ export const handleUpload = (
 };
 
 export const handleResponse = async <T,>(
-  resp: AxiosResponse<{
-    response?: any;
-    error?: any;
-  }>,
+  resp: AxiosResponse,
   config: IRestConfig
-): Promise<APIResponse<T | APIError>> => {
-  const { response, error } = resp.data;
-  if (error || response === undefined) {
-    return onErrorFn(error || defaultError, config);
+): Promise<T> => {
+  const response = resp.data;
+  if (!response) {
+    throw defaultError;
   }
   return onSuccessFn(response, config);
 };

@@ -1,8 +1,9 @@
-import type { IRestConfig } from '../types';
-import { create, StoreApi, useStore } from 'zustand';
-import { axiosInstance, handleResponse } from '../funcs/funcs';
-import { useMemo } from 'react';
-import { AlertFactory } from '@tisf/rn-providers';
+import type { APIError, IRestConfig } from '../types';
+import { create, StoreApi, UseBoundStore } from 'zustand';
+import { axiosFn, handleResponse } from '../funcs';
+import { useCallback } from 'react';
+import { AlertFactory } from '../../../shared';
+import { shallow } from 'zustand/shallow';
 
 export interface IListStore<T = any> {
   hasMoreItems: boolean;
@@ -12,30 +13,34 @@ export interface IListStore<T = any> {
   after: number;
   loading: boolean;
   refreshing: boolean;
-  error: boolean;
+  error?: APIError;
   config: IRestConfig;
-  setData: (input: IListStore) => void;
+  resetData: () => void;
+  setData: (input: IListStore, reset?: boolean) => void;
   setStatus: (status: boolean, refreshing?: boolean) => void;
-  setError: (status: boolean) => void;
+  setError: (status?: APIError) => void;
   setConfig: (input: IRestConfig) => void;
 }
 
 export interface IListHelpers {
   load: (current: number) => void;
-  loadItems: () => void;
+  onEndReached: () => void;
   refresh: () => void;
 }
 
+const initialData = {
+  hasMoreItems: false,
+  data: [],
+  count: 0,
+  before: 0,
+  after: 0,
+};
+
 export const createListStore = <T>(conf: IRestConfig) => {
   return create<IListStore<T>>((set) => ({
-    hasMoreItems: false,
-    data: [],
-    count: 0,
-    before: 0,
-    after: 0,
+    ...initialData,
     loading: false,
     refreshing: false,
-    error: false,
     config: conf,
     setData: (resp: IListStore<T>, reset?: boolean) =>
       set((state) => {
@@ -68,58 +73,113 @@ export const createListStore = <T>(conf: IRestConfig) => {
         return set({ loading: x });
       }
     },
-    setConfig: (config) => {
-      return set({ config });
-    },
     setError: (error) => {
+      AlertFactory.l(error);
       return set({ error });
     },
+    setConfig: (config) =>
+      set((state) => ({
+        config: {
+          ...state.config,
+          ...config,
+          params: { ...(state.config.params || {}), ...(config.params || {}) },
+        },
+      })),
+    resetData: () => set({ ...initialData }),
   }));
 };
 
-export const useListQuery = (
+export const useListQuery = <T = any>(
   key: string,
-  store: StoreApi<IListStore>
-): IListHelpers => {
-  const { config, ...listStore } = useStore(store);
-  const instance = axiosInstance(key, config);
-  return useMemo(() => {
-    const load = async (current = 0, refresh?: boolean) => {
-      if (listStore.loading || listStore.refreshing) {
+  useStore: UseBoundStore<StoreApi<IListStore<T>>>
+) => {
+  const { loading, refreshing, config, setData, setError, setStatus } =
+    useStore(
+      (state) => ({
+        setStatus: state.setStatus,
+        setData: state.setData,
+        setError: state.setError,
+        config: state.config,
+        loading: state.loading,
+        refreshing: state.refreshing,
+      }),
+      shallow
+    );
+  return useCallback(
+    async (current = 0, refresh?: boolean) => {
+      if (loading || refreshing) {
         return;
       }
       const reset = !current || current <= 0;
-      listStore.setStatus(true, !!refresh || reset);
+      setStatus(true, !!refresh || reset);
 
-      listStore.setError(false);
+      setError();
       try {
-        const resp = await instance({});
-        const { response, error } = await handleResponse(resp, {
+        const resp = await axiosFn(key, {
+          ...config,
+          params: { ...config.params, current },
+        });
+        const response = await handleResponse(resp, {
           displaySuccess: false,
           displayError: false,
         });
-        listStore.setStatus(false);
-        if (error) {
-          listStore.setError(true);
-        } else {
-          listStore.setData(response as IListStore);
-        }
+        setData(response as IListStore, reset);
+        setStatus(false);
       } catch (e) {
-        AlertFactory.l(e);
-        listStore.setError(true);
-        listStore.setStatus(false);
+        setError(e as APIError);
+        setStatus(false);
       }
-    };
-    const refresh = async () => {
-      return load(0, true);
-    };
-    const loadItems = async (): Promise<void | null> => {
-      if (listStore.hasMoreItems) {
-        return load(listStore.data.length);
-      }
-      return null;
-    };
-
-    return { load, loadItems, refresh };
-  }, [instance, listStore]);
+    },
+    [config, key, loading, refreshing, setData, setError, setStatus]
+  );
 };
+
+// export const useListQuery = <T = any>(
+//   key: string,
+//   store: StoreApi<IListStore<T>>
+// ): IListHelpers<T> => {
+//   const { config, loading, refreshing, data, hasMoreItems, ...listStore } =
+//     useStore(store);
+//   const instance = axiosInstance(key, config);
+//   return useMemo(() => {
+//     const load = async (current = 0, refresh?: boolean) => {
+//       if (loading || refreshing) {
+//         return;
+//       }
+//       const reset = !current || current <= 0;
+//       listStore.setStatus(true, !!refresh || reset);
+//
+//       listStore.setError();
+//       try {
+//         const resp = await instance();
+//         const response = await handleResponse(resp, {
+//           displaySuccess: false,
+//           displayError: false,
+//         });
+//         listStore.setData(response as IListStore);
+//         listStore.setStatus(false);
+//       } catch (e) {
+//         listStore.setError(e as APIError);
+//         listStore.setStatus(false);
+//       }
+//     };
+//     const refresh = async () => {
+//       return load(0, true);
+//     };
+//     const onEndReached = async (): Promise<void | null> => {
+//       if (hasMoreItems) {
+//         return load(data.length);
+//       }
+//       return null;
+//     };
+//
+//     return {
+//       load,
+//       onEndReached,
+//       refresh,
+//       loading,
+//       refreshing,
+//       data,
+//     };
+//   }, [data, hasMoreItems, instance, listStore, loading, refreshing]);
+// };
