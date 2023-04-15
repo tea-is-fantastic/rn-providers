@@ -58,7 +58,7 @@ export type IUseQuery = Omit<
   'queryKey' | 'queryFn'
 >;
 
-export type IUseListQuery = Omit<
+export type IUseInfiniteQuery = Omit<
   UseInfiniteQueryOptions<unknown, unknown, unknown, unknown, string[]>,
   'queryKey' | 'queryFn'
 >;

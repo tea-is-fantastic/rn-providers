@@ -1,6 +1,6 @@
 {
   "name": "@tisf/rn-providers",
-  "version": "0.1.9",
+  "version": "0.1.9-local.15",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

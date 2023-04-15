@@ -1,3 +1,3 @@
 export * from './app';
 export * from './overlays';
-export * from './rest';
+export * from './api';

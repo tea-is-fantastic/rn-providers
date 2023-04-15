@@ -1,6 +1,6 @@
 import type { APIError, APISuccess, IRestConfig } from './types';
 import { SnackbarFactory } from '../../../shared';
-import { hideSpinner, showSpinner } from '../../overlays';
+import { hideSpinner, showSpinner } from '../../../components/overlays';
 
 export const onErrorFn =
   (onError?: IRestConfig['onError'], display?: IRestConfig['displayError']) =>

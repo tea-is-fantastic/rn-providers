@@ -1,6 +1,6 @@
 import type { IRestConfig, IUseMutation, IUseQuery } from '../shared/types';
 import { onErrorFn, onLoadFn, onSuccessFn } from '../shared/managers';
-import { createQueryFn } from '../shared/util';
+import { createQueryFn, createQueryOpt } from '../shared/util';
 import {
   useMutation,
   UseMutationResult,
@@ -8,27 +8,14 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query';
 
-export const useComplexQuery = (
+export const useSimpleQuery = (
   key: string,
   config: IRestConfig,
   options: IUseQuery = {}
 ): UseQueryResult => {
-  const {
-    onSuccess,
-    onError,
-    loading,
-    displaySuccess,
-    displaySpinner,
-    displayError,
-  } = config;
   const queryFn = createQueryFn(key, config);
-  return useQuery([key], queryFn, {
-    onSuccess: onSuccessFn(onSuccess, displaySuccess),
-    onError: onErrorFn(onError, displayError),
-    onSettled: () => onLoadFn(false, loading, displaySpinner),
-    enabled: false,
-    ...options,
-  });
+  const opt = createQueryOpt(config, options);
+  return useQuery([key], queryFn, opt);
 };
 
 export const useComplexMutation = (

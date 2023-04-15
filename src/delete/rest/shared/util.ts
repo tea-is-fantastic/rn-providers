@@ -1,15 +1,25 @@
-import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import {
+  InfiniteData,
   QueryClient,
   QueryFunction,
   QueryFunctionContext,
   QueryKey,
 } from '@tanstack/react-query';
 import { Platform } from 'react-native';
-import type { IRestConfig, PickedFile } from './types';
+import type {
+  IRestConfig,
+  IUseInfiniteQuery,
+  IUseQuery,
+  PickedFile,
+} from './types';
 import { AuthUtils, useAppStore } from '@tisf/rn-providers';
 import { subst } from 'urlcat';
-import { onLoadFn } from './managers';
+import { onErrorFn, onLoadFn, onSuccessFn } from './managers';
 
 export interface UrlConfig {
   url: string;
@@ -41,10 +51,11 @@ export const defaultConfig: AxiosRequestConfig = {
   validateStatus(status: number): boolean {
     return status >= 200 && status < 500; // default
   },
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-  },
+};
+
+export const defaultHeaders: Record<string, string> = {
+  'Accept': 'application/json',
+  'Content-Type': 'application/json',
 };
 
 export const handleUpload = (
@@ -91,13 +102,16 @@ export const axiosFn = (queryKey: string, config: IRestConfig = {}) => {
   const token = AuthUtils.getToken();
   const { method, url, urlConfig } = urlFromString(queryKey);
   const { loading, displaySpinner } = config;
-  const headers: AxiosRequestConfig['headers'] = { ...config.headers };
+  const headers: AxiosRequestConfig['headers'] = {
+    ...defaultHeaders,
+    ...config.headers,
+  };
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
   const instance = axios.create({
     ...defaultConfig,
-    baseURL: useAppStore.getState().urls?.api,
+    baseURL: useAppStore.getState()?.urls?.api,
     ...urlConfig,
   });
 
@@ -140,19 +154,21 @@ export const createQueryFn = (queryKey: string, config: IRestConfig = {}) => {
 };
 
 export interface IPageParam {
-  count: number;
   length: number;
   before?: number;
   after?: number;
 }
 
-export const createListQueryFn = (
+export const createInfiniteQueryFn = (
   queryKey: string,
   config: IRestConfig = {}
 ): QueryFunction => {
   return ({ pageParam }: QueryFunctionContext<QueryKey, IPageParam>) => {
-    const { length = 0, before, after } = pageParam || {};
-    const params = { ...(config.params || {}), current: length };
+    const { length, before, after } = pageParam || {};
+    const params = config.params || {};
+    if (length) {
+      params.current = length * 10;
+    }
     if (before) {
       params.before = before;
     }
@@ -163,5 +179,60 @@ export const createListQueryFn = (
       ...config,
       params,
     });
+  };
+};
+
+export const createQueryOpt = (
+  config: IRestConfig,
+  options: IUseQuery
+): IUseQuery => {
+  const {
+    onSuccess,
+    onError,
+    loading,
+    displaySpinner,
+    displaySuccess,
+    displayError,
+  } = config;
+  return {
+    onSuccess: onSuccessFn(onSuccess, displaySuccess),
+    onError: onErrorFn(onError, displayError),
+    onSettled: () => onLoadFn(false, loading, displaySpinner),
+    enabled: false,
+    select: (res: unknown) => (res as AxiosResponse).data,
+    ...options,
+  };
+};
+
+export const createInfiniteQueryOpt = (
+  config: IRestConfig,
+  options: IUseInfiniteQuery
+): IUseInfiniteQuery => {
+  const { onError, loading } = config;
+  return {
+    getNextPageParam: (
+      lastPage: unknown,
+      allPages: Array<unknown>
+    ): IPageParam => {
+      const lp = lastPage as IPageParam;
+      return {
+        length: allPages.length + 1,
+        before: lp?.before || Date.now(),
+        after: lp?.after,
+      };
+    },
+    onSettled: () => onLoadFn(false, loading, false),
+    onError: onErrorFn(onError, false),
+    enabled: true,
+    select: (data: InfiniteData<unknown>) => {
+      console.log('=======SELECTED DATA========', data);
+      return {
+        pages: data.pages.flatMap((page: any) => {
+          return page.data.data;
+        }),
+        pageParams: data.pageParams,
+      };
+    },
+    ...options,
   };
 };
