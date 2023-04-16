@@ -29,7 +29,7 @@ export interface IListHelpers {
 }
 
 const initialData = {
-  hasMoreItems: false,
+  hasMoreItems: true,
   data: [],
   count: 0,
   before: 0,
