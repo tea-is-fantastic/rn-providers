@@ -29,7 +29,7 @@ export interface IListHelpers {
 }
 
 const initialData = {
-  hasMoreItems: true,
+  hasMoreItems: false,
   data: [],
   count: 0,
   before: 0,
@@ -56,13 +56,19 @@ export const createListStore = <T>(conf: IRestConfig) => {
         }
         const hasMoreReceived = newData.length < countReceived;
 
-        return {
+        const returned = {
           data: newData,
           count: countReceived,
           before: beforeReceived,
           after: afterReceived,
           hasMoreItems: hasMoreReceived,
         };
+        console.log(
+          '===============USELISTQUERY=================',
+          hasMoreReceived,
+          returned
+        );
+        return returned;
       }),
     setStatus: (x, y) => {
       if (!x) {

@@ -21,7 +21,6 @@ export const urlFromString = (url: string | AxiosRequestConfig): UrlConfig => {
     method: output[1] || 'get',
     urlConfig: typeof baseURL === 'string' ? { baseURL } : {},
   };
-  console.log(oput);
   return oput;
 };
 

@@ -1,6 +1,6 @@
 import type React from 'react';
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import type {FormikContextType} from 'formik';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import type { FormikContextType } from 'formik';
 import { create } from 'zustand';
 import { SnackbarFactory } from '../factories/SnackbarFactory';
 import { formatPhone } from '../func';
@@ -21,7 +21,7 @@ export const useFirebaseStore = create<IFirebaseStore>((set, get) => ({
   timer: -1,
   phoneNumber: '',
   send: () => get().timer <= 0,
-  decrement: () => set(state => ({timer: state.timer - 1})),
+  decrement: () => set((state) => ({ timer: state.timer - 1 })),
 }));
 
 export interface FirebaseModel {
@@ -32,7 +32,7 @@ export interface FirebaseModel {
 function onError() {
   SnackbarFactory.e(
     'An error has occurred. Please ensure that you are entering the ' +
-      'correct 6 digit code received on your phone. If you continue to have problems, please contact us.',
+      'correct 6 digit code received on your phone. If you continue to have problems, please contact us.'
   );
 }
 
@@ -42,24 +42,24 @@ export class FirebaseAdapter {
 
   constructor(
     formikRef: React.MutableRefObject<FormikContextType<FirebaseModel>>,
-    afterVerify: (value: string) => void,
+    afterVerify: (value: string) => void
   ) {
     this.formikRef = formikRef;
     this.afterVerify = afterVerify;
   }
 
   afterCodeSent = () => {
-    const {setSubmitting} = this.formikRef.current;
+    const { setSubmitting } = this.formikRef.current;
     const phoneNumber = useFirebaseStore.getState().phoneNumber;
     SnackbarFactory.s(
       `A code was sent to ${phoneNumber}. ` +
-        'Please enter it into the text box and click on Submit to continue',
+        'Please enter it into the text box and click on Submit to continue'
     );
     setSubmitting(false);
   };
 
   extractToken = async (user: FirebaseAuthTypes.User) => {
-    const {setSubmitting} = this.formikRef.current;
+    const { setSubmitting } = this.formikRef.current;
     if (user) {
       const token = await user.getIdToken();
       if (token) {
@@ -76,7 +76,7 @@ export class FirebaseAdapter {
 
   convertCodeToUser = async (
     code: string,
-    verif: FirebaseAuthTypes.ConfirmationResult | string,
+    verif: FirebaseAuthTypes.ConfirmationResult | string
   ) => {
     try {
       let cred: FirebaseAuthTypes.UserCredential | null;
@@ -97,11 +97,11 @@ export class FirebaseAdapter {
   };
 
   verifyCode = async () => {
-    const {values, setSubmitting} = this.formikRef.current;
-    const {code} = values;
+    const { values, setSubmitting } = this.formikRef.current;
+    const { code } = values;
     const state = useFirebaseStore.getState();
     const confirm = state.confirm || state.verification;
-    console.log('==========100==========', code, confirm);
+
     if (code && confirm) {
       setSubmitting(true);
       try {
@@ -117,7 +117,7 @@ export class FirebaseAdapter {
   };
 
   sendCode = async (resend = false) => {
-    const {setSubmitting} = this.formikRef.current;
+    const { setSubmitting } = this.formikRef.current;
     const store = useFirebaseStore;
     const state: IFirebaseStore = store.getState();
     const phone: string = formatPhone(state.phoneNumber);
@@ -126,15 +126,15 @@ export class FirebaseAdapter {
     if (!send) {
       setSubmitting(false);
       SnackbarFactory.e(
-        `Slow down tiger! You still have ${timer} seconds to go`,
+        `Slow down tiger! You still have ${timer} seconds to go`
       );
       return;
     }
     try {
       setSubmitting(true);
-      store.setState({timer: -1});
+      store.setState({ timer: -1 });
       const confirm = await auth().signInWithPhoneNumber(phone, resend);
-      store.setState({timer: MAX_TIMER, confirm, verification: undefined});
+      store.setState({ timer: MAX_TIMER, confirm, verification: undefined });
       this.afterCodeSent();
     } catch (e) {
       SnackbarFactory.d(e);
@@ -143,7 +143,7 @@ export class FirebaseAdapter {
   };
 
   firebaseAuto = async (resend = false) => {
-    const {values, setSubmitting} = this.formikRef.current || {};
+    const { values, setSubmitting } = this.formikRef.current || {};
     const phoneNumber = String(values.phoneNumber);
     const phone: string = formatPhone(phoneNumber);
     try {
@@ -152,7 +152,7 @@ export class FirebaseAdapter {
         .verifyPhoneNumber(phone, 5, resend)
         .on(
           'state_changed',
-          phoneAuthSnapshot => {
+          (phoneAuthSnapshot) => {
             switch (phoneAuthSnapshot.state) {
               case auth.PhoneAuthState.CODE_SENT: // or 'sent'
                 useFirebaseStore.setState({
@@ -173,7 +173,7 @@ export class FirebaseAdapter {
               case auth.PhoneAuthState.AUTO_VERIFIED: // or 'verified'
                 // console.log('auto verified on android');
                 // console.log(phoneAuthSnapshot);
-                const {verificationId, code} = phoneAuthSnapshot;
+                const { verificationId, code } = phoneAuthSnapshot;
                 useFirebaseStore.setState({
                   verification: verificationId,
                   confirm: undefined,
@@ -182,7 +182,7 @@ export class FirebaseAdapter {
                 break;
             }
           },
-          error => {
+          (error) => {
             // console.log('verification error');
             // console.log(error.verificationId);
             setSubmitting(false);
@@ -190,7 +190,7 @@ export class FirebaseAdapter {
           },
           () => {
             // console.log(phoneAuthSnapshot);
-          },
+          }
         );
     } catch (e) {
       SnackbarFactory.d();
@@ -200,4 +200,3 @@ export class FirebaseAdapter {
 }
 
 export const FbAnalytics = analytics();
-

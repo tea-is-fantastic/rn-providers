@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { View } from 'react-native';
-import { AuthUtils, AuthInterface } from '../models';
+import { AuthInterface, AuthUtils } from '../models';
 import type { ReactFC } from '../index';
 
-function shouldRedirect(auth: AuthInterface | undefined, unauth: boolean): boolean {
+function shouldRedirect(
+  auth: AuthInterface | undefined,
+  unauth: boolean
+): boolean {
   const authed = AuthUtils.isAuth(auth);
-  console.log('auth', auth, 'unauth', unauth, 'authed', authed);
   return unauth ? authed : !authed;
 }
 
@@ -14,7 +16,7 @@ interface IAuthOnly {
   unauth?: boolean;
 }
 
-export const AuthOnly: ReactFC<IAuthOnly> = ({children, unauth = false}) => {
+export const AuthOnly: ReactFC<IAuthOnly> = ({ children, unauth = false }) => {
   const navigation = useNavigation<any>();
   const route = useRoute();
   const [authed, setAuthed] = React.useState(false);
