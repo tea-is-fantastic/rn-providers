@@ -1,6 +1,6 @@
 import Geocoder from 'react-native-geocoding';
 import Geolocation from 'react-native-geolocation-service';
-import {Alert, Linking, PermissionsAndroid, Platform} from 'react-native';
+import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
 import GeocoderResponse = Geocoder.GeocoderResponse;
 import { AddressModel, IMyLatLng } from '../models';
 import { SnackbarFactory } from './SnackbarFactory';
@@ -9,7 +9,7 @@ import { PERMISSIONS } from 'react-native-permissions';
 
 type AddressCallback = (address: AddressModel | null) => void;
 
-export default class LocationFactory {
+export class LocationFactory {
   static hasPermissionIOS = async () => {
     const openSetting = () => {
       Linking.openSettings().catch(() => {
@@ -31,12 +31,12 @@ export default class LocationFactory {
         'Turn on Location Services to allow this app to determine your location.',
         '',
         [
-          {text: 'Go to Settings', onPress: openSetting},
+          { text: 'Go to Settings', onPress: openSetting },
           {
             text: "Don't Use Location",
             onPress: () => {},
           },
-        ],
+        ]
       );
     }
 
@@ -54,7 +54,7 @@ export default class LocationFactory {
     }
 
     const hasPermission = await PermissionsAndroid.check(
-      PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
     );
 
     if (hasPermission) {
@@ -62,7 +62,7 @@ export default class LocationFactory {
     }
 
     const status = await PermissionsAndroid.request(
-      PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
     );
 
     if (status === PermissionsAndroid.RESULTS.GRANTED) {
@@ -82,7 +82,7 @@ export default class LocationFactory {
     const hasLocationPermission = await LocationFactory.hasLocationPermission();
     if (hasLocationPermission) {
       Geolocation.getCurrentPosition(
-        async position => {
+        async (position) => {
           const latlng: IMyLatLng = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
@@ -94,18 +94,18 @@ export default class LocationFactory {
             console.log(e);
           }
         },
-        error => {
+        (error) => {
           // See error code charts below.
           console.log(error.code, error.message);
         },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
       );
     }
     return new AddressModel({});
   };
 
   static getCurrentAddress = (callback: AddressCallback): void => {
-    LocationFactory.getCurrentLocation(async address => {
+    LocationFactory.getCurrentLocation(async (address) => {
       if (address?.geo) {
         const output = await LocationFactory.reverseGeocode(address.geo);
         callback(output);
@@ -116,7 +116,7 @@ export default class LocationFactory {
   static geocodeToAddress = (input: GeocoderResponse): AddressModel | null => {
     const res = input.results[0];
     const addComps = res?.address_components;
-    if(!addComps) {
+    if (!addComps) {
       return null;
     }
     const output = new AddressModel({});
@@ -141,9 +141,9 @@ export default class LocationFactory {
   };
 
   static reverseGeocode = async (
-    latlng: IMyLatLng,
+    latlng: IMyLatLng
   ): Promise<AddressModel | null> => {
-    const secrets = useAppStore.getState().secrets
+    const secrets = useAppStore.getState().secrets;
     Geocoder.init(secrets.googleMapsApiKey as string);
     try {
       const json = await Geocoder.from(latlng);
