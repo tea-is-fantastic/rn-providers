@@ -1,9 +1,14 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import shallow from 'zustand/shallow';
 import type { AddressModel, AuthInterface } from '../models';
 import type { ReactFC } from '../types';
-import { AuthUtils, useAddressStore, useAuthStore, useUserStore } from '../models';
-import LocationFactory from '../factories/LocationFactory';
+import {
+  AuthUtils,
+  useAddressStore,
+  useAuthStore,
+  useUserStore,
+} from '../models';
+import { LocationFactory } from '../factories';
 
 export interface ICurrentUserConfig {
   location?: AddressModel;
@@ -24,15 +29,18 @@ export const GetCurrentUserCtx = React.createContext<ICurrentUserConfig>({
 
 export const useCurrentUser = () => useContext(GetCurrentUserCtx);
 
-const GetCurrentUser: ReactFC = ({children}) => {
-  const [isAuth, updateAuth, token] = useAuthStore(s => [s.isAuth, s.update, s.token], shallow);
+const GetCurrentUser: ReactFC = ({ children }) => {
+  const [isAuth, updateAuth, token] = useAuthStore(
+    (s) => [s.isAuth, s.update, s.token],
+    shallow
+  );
   const [getCurrentUser, updateUser, userId] = useUserStore(
-    s => [s.current, s.update, s.id],
-    shallow,
+    (s) => [s.current, s.update, s.id],
+    shallow
   );
   const [getCurrentAdd, updateAddress, addressId] = useAddressStore(
-    s => [s.current, s.update, s.id],
-    shallow,
+    (s) => [s.current, s.update, s.id],
+    shallow
   );
   const [location, setLocation] = useState<AddressModel>();
 
@@ -46,7 +54,7 @@ const GetCurrentUser: ReactFC = ({children}) => {
 
   async function getLocation() {
     try {
-      await LocationFactory.getCurrentLocation(add => {
+      await LocationFactory.getCurrentLocation((add) => {
         if (add) {
           setLocation(add);
         }
@@ -116,7 +124,8 @@ const GetCurrentUser: ReactFC = ({children}) => {
         login,
         getLocation,
         initAuth,
-      }}>
+      }}
+    >
       {children}
     </GetCurrentUserCtx.Provider>
   );
