@@ -1,12 +1,13 @@
 import { UserModel } from '../user';
 import type { AddressInterface } from './AddressInterface';
-import type {IMyLatLng} from './LatLng';
+import type { IMyLatLng } from './LatLng';
 
 export class AddressModel {
   id?: number;
   fullName?: string;
   phoneNumber?: string;
   type?: string;
+  addressLine?: string;
   addressLine1?: string;
   addressLine2?: string;
   city?: string;
@@ -20,18 +21,6 @@ export class AddressModel {
   verified?: boolean;
   consumer?: UserModel;
   formattedAddress?: string;
-
-  get addressLine(): string {
-    let x = this.addressLine1 || '';
-    if (this.addressLine2) {
-      if (x === null) {
-        x = this.addressLine2;
-      } else {
-        x += ` ${this.addressLine2}`;
-      }
-    }
-    return x;
-  }
 
   get stateStr(): string {
     let x = this.state || '';
@@ -51,13 +40,25 @@ export class AddressModel {
     }`;
   }
 
+  get firstLine(): string {
+    let x = this.addressLine1 || '';
+    if (this.addressLine2) {
+      if (x === null) {
+        x = this.addressLine2;
+      } else {
+        x += ` ${this.addressLine2}`;
+      }
+    }
+    return x;
+  }
+
   get lastLine() {
     return `${this.city}${this.stateStr ? `, ${this.stateStr}` : ''}, Pakistan`;
   }
 
-  constructor({consumer, ...source}: AddressInterface) {
+  constructor({ consumer, ...source }: AddressInterface) {
     Object.assign(this, source);
-    if(consumer) {
+    if (consumer) {
       this.consumer = new UserModel(consumer);
     }
   }
